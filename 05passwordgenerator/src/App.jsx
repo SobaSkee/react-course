@@ -9,6 +9,10 @@ function App() {
   const [charAllowed, setCharAllowed] = useState(false);
   const [password, setPassword] = useState("");
 
+  const generatePassword() {
+    
+  }
+
   return (
     <div className="w-full max-w-md mx-auto shadow-md rounded-lg px-4 py-3 my-8 bg-gray-800 text-orange-500">
       <h1 className="text-3xl font-bold mb-2 text-center">
@@ -38,7 +42,30 @@ function App() {
             className="cursor-pointer"
             onChange={(e) => setLength(e.target.value)}
           />
-          <label htmlFor="length">Length: {length}</label>
+        </div>
+        <div className="flex items-center gap-x-1">
+          <input
+            type="checkbox"
+            defaultChecked={numberAllowed}
+            onChange={() => {
+              setNumberAllowed((prev) => !prev);
+            }}
+            name=""
+            id=""
+          />
+          <label htmlFor="number">Numbers</label>
+        </div>
+        <div className="flex items-center gap-x-1">
+          <input
+            type="checkbox"
+            defaultChecked={charAllowed}
+            onChange={() => {
+              setCharAllowed((prev) => !prev);
+            }}
+            name=""
+            id=""
+          />
+          <label htmlFor="charInput">Character</label>
         </div>
       </div>
     </div>
