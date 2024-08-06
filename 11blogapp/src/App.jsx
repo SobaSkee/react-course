@@ -1,12 +1,17 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
+import { Outlet } from "react-router-dom";
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  return <h1 className="text-4xl text-red-400">Test</h1>;
+  return (
+    <>
+      <div>
+        <main>
+          <Outlet />
+        </main>
+      </div>
+    </>
+  );
 }
 
 export default App;
