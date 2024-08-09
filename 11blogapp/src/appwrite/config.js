@@ -1,5 +1,5 @@
-import { Client, Databases, Storage, Query, ID } from "appwrite";
 import conf from "../conf/conf";
+import { Client, Databases, Storage, Query, ID } from "appwrite";
 
 export class Service {
   client = new Client();
@@ -9,75 +9,83 @@ export class Service {
   constructor() {
     this.client
       .setEndpoint(conf.appwriteUrl)
-      .setProject(conf.appWriteProjectId);
-
+      .setProject(conf.appwriteProjectId);
     this.databases = new Databases(this.client);
     this.bucket = new Storage(this.client);
   }
 
-  /* DATABASE RELATED METHODS */
   async getPost(slug) {
     try {
       return await this.databases.getDocument(
-        conf.appWriteDatabaseId,
-        conf.appWriteCollectionId,
+        conf.appwriteDatabaseId,
+        conf.appwriteCollectionId,
         slug
       );
     } catch (error) {
-      console.log("Appwrite service :: getDocument() :: ", error);
+      console.log("Appwrite service :: getPost() :: ", error);
       return false;
     }
   }
+
   async getPosts(queries = [Query.equal("status", "active")]) {
     try {
       return await this.databases.listDocuments(
-        conf.appWriteDatabaseId,
-        conf.appWriteCollectionId,
+        conf.appwriteDatabaseId,
+        conf.appwriteCollectionId,
         queries
       );
     } catch (error) {
-      console.log("Appwrite service :: listDocuments() :: ", error);
+      console.log("Appwrite service :: getPosts() :: ", error);
       return false;
     }
   }
-  // slug param is just the title but we remove spaces and replace with dashes (this creates a unique identifier)
+
   async createPost({ title, slug, content, featuredImage, status, userId }) {
     try {
-      // in app write docs/products/databases/documents, they use ID.unique() but we can use the slug instead
       return await this.databases.createDocument(
-        conf.appWriteDatabaseId,
-        conf.appWriteCollectionId,
+        conf.appwriteDatabaseId,
+        conf.appwriteCollectionId,
         slug,
-        // all the attributes of creating a post on our blog
-        { title, content, featuredImage, status, userId }
+        {
+          title,
+          content,
+          featuredImage,
+          status,
+          userId,
+        }
       );
     } catch (error) {
-      console.log("Appwrite service :: createDocument() :: ", error);
+      console.log("Appwrite service :: createPost() :: ", error);
       return false;
     }
   }
-  // notice userId is not passed in because we do not want user to update that
+
   async updatePost(slug, { title, content, featuredImage, status }) {
     try {
       return await this.databases.updateDocument(
-        conf.appWriteDatabaseId,
-        conf.appWriteCollectionId,
+        conf.appwriteDatabaseId,
+        conf.appwriteCollectionId,
         slug,
-        { title, content, featuredImage, status }
+        {
+          title,
+          content,
+          featuredImage,
+          status,
+        }
       );
     } catch (error) {
       console.log("Appwrite service :: updateDocument() :: ", error);
       return false;
     }
   }
+
   async deletePost(slug) {
     try {
       await this.databases.deleteDocument(
-        conf.appWriteDatabaseId,
-        conf.appWriteCollectionId,
+        conf.appwriteDatabaseId,
+        conf.appwriteCollectionId,
         slug
       );
-      // return true to indicate we successfully deleted the post
       return true;
     } catch (error) {
       console.log("Appwrite service :: deleteDocument() :: ", error);
@@ -85,32 +93,32 @@ export class Service {
     }
   }
 
-  /* STORAGE SERVICE RELATED METHODS */
+  // storage service
+
   async uploadFile(file) {
     try {
       return await this.bucket.createFile(
-        conf.appWriteBucketId,
+        conf.appwriteBucketId,
         ID.unique(),
         file
       );
     } catch (error) {
-      console.log("Appwrite service :: createFile() :: ", error);
+      console.log("Appwrite service :: uploadFile() :: ", error);
       return false;
     }
   }
+
   async deleteFile(fileId) {
     try {
-      await this.bucket.deleteFile(conf.appWriteBucketId, fileId);
-      return true;
+      return await this.bucket.deleteFile(conf.appwriteBucketId, fileId);
     } catch (error) {
       console.log("Appwrite service :: deleteFile() :: ", error);
       return false;
     }
   }
-  // no need to async because it is very fast
+
   getFilePreview(fileId) {
-    // returns a url object that represents the file preview
-    return this.bucket.getFilePreview(conf.appWriteBucketId, fileId).href;
+    return this.bucket.getFilePreview(conf.appwriteBucketId, fileId).href;
   }
 }
 
